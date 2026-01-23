@@ -17,18 +17,11 @@ class ConvertService {
     // Check if we have real SDK credentials
     if (sdkKey && sdkKey !== 'your_sdk_key_here') {
       try {
-        // Dynamic import for the real SDK - handle different export styles
+        // Dynamic import for the real SDK
 const ConvertSDKModule = await import('@convertcom/js-sdk');
-
-// The SDK might export in different ways depending on version
-const ConvertSDK = ConvertSDKModule.default?.default 
-  || ConvertSDKModule.default 
-  || ConvertSDKModule.ConvertSDK
-  || ConvertSDKModule;
-
-if (typeof ConvertSDK !== 'function') {
-  throw new Error(`ConvertSDK is not a constructor. Module exports: ${Object.keys(ConvertSDKModule).join(', ')}`);
-}
+console.log('SDK Module keys:', Object.keys(ConvertSDKModule));
+console.log('SDK Module.default:', typeof ConvertSDKModule.default);
+const ConvertSDK = ConvertSDKModule.default;
         
         this.sdk = new ConvertSDK({
           sdkKey,
