@@ -1,4 +1,4 @@
-const API_BASE = '/api';
+const API_BASE = 'https://convert-ecommerce-demo-production.up.railway.app/api';
 
 class ApiClient {
   async request(endpoint, options = {}) {
