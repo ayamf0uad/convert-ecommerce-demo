@@ -15,35 +15,39 @@ class ConvertService {
     const { sdkKey, sdkKeySecret, environment = 'staging' } = config;
 
     // Check if we have real SDK credentials
-    if (sdkKey && sdkKey !== 'your_sdk_key_here') {
-      try {
-        // Dynamic import for the real SDK
-const ConvertSDKModule = await import('@convertcom/js-sdk');
-console.log('=== SDK DEBUG ===');
-console.log('Module keys:', Object.keys(ConvertSDKModule));
-console.log('Module.default type:', typeof ConvertSDKModule.default);
-console.log('Module.default keys:', ConvertSDKModule.default ? Object.keys(ConvertSDKModule.default) : 'N/A');
-console.log('=================');
-        
-        this.sdk = new ConvertSDK({
-          sdkKey,
-          sdkKeySecret,
-          environment,
-          dataRefreshInterval: 300000, // 5 minutes
-          network: {
-            tracking: true
-          }
-        });
-
-        await this.sdk.onReady();
-        this.useMockMode = false;
-        this.isReady = true;
-        console.log('✅ Convert SDK initialized with real credentials');
-        return true;
-      } catch (error) {
-        console.error('Failed to initialize real SDK, falling back to mock mode:', error.message);
+if (sdkKey && sdkKey !== 'your_sdk_key_here') {
+  try {
+    // Use createRequire for CommonJS module
+    const { createRequire } = await import('module');
+    const require = createRequire(import.meta.url);
+    const ConvertSDK = require('@convertcom/js-sdk');
+    
+    console.log('ConvertSDK type:', typeof ConvertSDK);
+    console.log('ConvertSDK keys:', Object.keys(ConvertSDK));
+    
+    const SDKClass = ConvertSDK.default || ConvertSDK;
+    
+    this.sdk = new SDKClass({
+      sdkKey,
+      sdkKeySecret,
+      environment,
+      dataRefreshInterval: 300000,
+      network: {
+        tracking: true
       }
-    }
+    });
+
+    await this.sdk.onReady();
+    this.useMockMode = false;
+    this.isReady = true;
+    console.log('✅ Convert SDK initialized with real credentials');
+    console.log(`   Environment: ${environment}`);
+    return true;
+  } catch (error) {
+    console.error('Failed to initialize real SDK, falling back to mock mode:', error.message);
+    console.error('Full error:', error);
+  }
+}
 
     // Use mock mode
     this.useMockMode = true;
