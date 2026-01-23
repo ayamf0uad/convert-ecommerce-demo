@@ -19,9 +19,11 @@ class ConvertService {
       try {
         // Dynamic import for the real SDK
 const ConvertSDKModule = await import('@convertcom/js-sdk');
-console.log('SDK Module keys:', Object.keys(ConvertSDKModule));
-console.log('SDK Module.default:', typeof ConvertSDKModule.default);
-const ConvertSDK = ConvertSDKModule.default;
+console.log('=== SDK DEBUG ===');
+console.log('Module keys:', Object.keys(ConvertSDKModule));
+console.log('Module.default type:', typeof ConvertSDKModule.default);
+console.log('Module.default keys:', ConvertSDKModule.default ? Object.keys(ConvertSDKModule.default) : 'N/A');
+console.log('=================');
         
         this.sdk = new ConvertSDK({
           sdkKey,
