@@ -22,20 +22,23 @@ if (sdkKey && sdkKey !== 'your_sdk_key_here') {
     const require = createRequire(import.meta.url);
     const ConvertSDK = require('@convertcom/js-sdk');
     
-    console.log('ConvertSDK type:', typeof ConvertSDK);
-    console.log('ConvertSDK keys:', Object.keys(ConvertSDK));
-    
     const SDKClass = ConvertSDK.default || ConvertSDK;
     
-    this.sdk = new SDKClass({
+    const sdkConfig = {
       sdkKey,
-      sdkKeySecret,
       environment,
       dataRefreshInterval: 300000,
       network: {
         tracking: true
       }
-    });
+    };
+    
+    // Only add secret if provided (not needed for public keys)
+    if (sdkKeySecret && sdkKeySecret !== 'your_sdk_key_secret_here') {
+      sdkConfig.sdkKeySecret = sdkKeySecret;
+    }
+    
+    this.sdk = new SDKClass(sdkConfig);
 
     await this.sdk.onReady();
     this.useMockMode = false;
