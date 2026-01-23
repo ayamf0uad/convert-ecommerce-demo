@@ -18,7 +18,8 @@ class ConvertService {
     if (sdkKey && sdkKey !== 'your_sdk_key_here') {
       try {
         // Dynamic import for the real SDK
-        const { default: ConvertSDK } = await import('@convertcom/js-sdk');
+        const ConvertSDKModule = await import('@convertcom/js-sdk');
+        const ConvertSDK = ConvertSDKModule.default || ConvertSDKModule;
         
         this.sdk = new ConvertSDK({
           sdkKey,
