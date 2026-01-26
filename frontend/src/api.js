@@ -1,4 +1,4 @@
-const API_BASE = 'https://convert-ecommerce-demo-production.up.railway.app/api';
+const API_BASE = '/api';
 
 class ApiClient {
   async request(endpoint, options = {}) {
@@ -122,6 +122,13 @@ class ApiClient {
     return this.request('/pages/cart', {
       method: 'POST',
       body: { visitorId, visitorProperties, cartItems }
+    });
+  }
+
+  getProductPage(visitorId, productId, visitorProperties = {}) {
+    return this.request('/pages/product', {
+      method: 'POST',
+      body: { visitorId, visitorProperties, productId }
     });
   }
 }
