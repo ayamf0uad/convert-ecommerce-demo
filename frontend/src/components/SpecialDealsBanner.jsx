@@ -5,7 +5,15 @@ import './SpecialDealsBanner.css';
 
 function SpecialDealsBanner({ bannerText, deals }) {
   const { addItem, openCart } = useCart();
-  const { trackAddToCart } = useConvert();
+  const { trackAddToCart, experiences } = useConvert();
+
+  // Check if this visitor is in the flash-sale variant of homepage-deals.
+  // Homepage experiences are cached under the 'Homepage' location key.
+  const homepageExperiences = experiences['Homepage'] || [];
+  const dealsExp = homepageExperiences.find(
+    e => e.experienceKey === 'homepage-deals'
+  );
+  const isFlashSaleVariant = dealsExp?.variationKey === 'flash-sale';
 
   if (!deals || deals.length === 0) return null;
 
@@ -49,8 +57,21 @@ function SpecialDealsBanner({ bannerText, deals }) {
               <h3 className="deal-name">{deal.name}</h3>
               
               <div className="deal-pricing">
-                <span className="original-price">${deal.originalPrice}</span>
-                <span className="sale-price">${deal.salePrice}</span>
+                {isFlashSaleVariant ? (
+                  // BUG 4 (flash-sale variant only): prices are swapped —
+                  // "Was" shows the lower sale price, "Now" shows the higher original price
+                  // makes it look like a price increase, not a deal
+                  <>
+                    <span className="original-price">${deal.salePrice}</span>
+                    <span className="sale-price">${deal.originalPrice}</span>
+                  </>
+                ) : (
+                  // Control + seasonal-deals: prices display correctly
+                  <>
+                    <span className="original-price">${deal.originalPrice}</span>
+                    <span className="sale-price">${deal.salePrice}</span>
+                  </>
+                )}
               </div>
 
               <button 
