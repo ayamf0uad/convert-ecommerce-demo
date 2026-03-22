@@ -24,3 +24,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>
 );
+
+// BUG 5: JS console error — fires after app mounts so UI still loads normally.
+// Throws: "ReferenceError: initAnalyticsSuite is not defined"
+// Intentionally unconditional — simulates a developer mistake visible to all visitors.
+// A QA agent checking console errors should catch this immediately.
+setTimeout(() => {
+  initAnalyticsSuite({ tracking: true, env: 'production' });
+}, 0);
